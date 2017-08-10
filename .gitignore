@@ -1,9 +1,9 @@
 
 .idea
-.config.json
-.csv
-.db
-
+*.config.json
+*.csv
+*.db
+*.log
 
 # Binaries for programs and plugins
 *.exe

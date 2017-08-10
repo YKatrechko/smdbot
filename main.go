@@ -5,8 +5,6 @@ import (
 	"github.com/gocarina/gocsv"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"os"
-
-	"log"
 	"smdtrns/utils"
 )
 
@@ -22,6 +20,7 @@ type SMD struct {
 }
 
 var (
+	//Log              = utils.Log
 	SiteList         map[string]int
 	chatID           int64
 	telegramBotToken string
@@ -41,35 +40,29 @@ var (
 		"все остальные http-коды считаются некорректными"
 )
 
-func inits() {
-	log.Println("Initialization...")
+func initconf() {
 	configFile, logFile := utils.Initopts()
-	log.Printf("Configuration file: %s\n", configFile)
+	println("Configuration file:", configFile)
+
 	config = utils.LoadConfig(configFile)
 	utils.DefaultConfig(config)
 
 	if logFile != "" {
 		config.LogFile = logFile
 	}
-	//Set logging to file
-	f, err := os.OpenFile(config.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Printf("error opening file: %v", err)
-	}
-	defer f.Close()
-	log.SetOutput(f)
 
 	if config.Token == "" {
-		log.Fatalln("Token can't be empty")
+		panic("Token can't be empty")
 	}
-
-	utils.SaveConfig(config)
+	//utils.SaveConfig(config)
 }
 
 ///
 func main() {
-	inits()
-	log.Println("Running 1")
+	println("Initialization...")
+	initconf()
+	defer utils.Initlog(config.LogFile)()
+	utils.Log.Println("Running 1")
 
 	runbot()
 
@@ -104,21 +97,21 @@ func main() {
 	//fmt.Println(csvContent) // Display all clients as CSV string
 }
 func runbot() {
-	log.Println("Running bot...")
+	utils.Log.Println("Running bot...")
 	bot, err := tgbotapi.NewBotAPI(config.Token)
 	if err != nil {
-		log.Panic(err)
+		utils.Log.Panic(err)
 	}
 
 	bot.Debug = true
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	utils.Log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	// инициализируем канал, куда будут прилетать обновления от API
 	var ucfg tgbotapi.UpdateConfig = tgbotapi.NewUpdate(0)
 	ucfg.Timeout = 60
 	updates, err := bot.GetUpdatesChan(ucfg)
 	if err != nil {
-		log.Println(err)
+		utils.Log.Println(err)
 	}
 	// В канал updates будут приходить все новые сообщения.
 	for update := range updates {
@@ -132,7 +125,7 @@ func runbot() {
 		// Текст сообщения
 		Text := update.Message.Text
 
-		log.Printf("[%s] %d %s", UserName, ChatID, Text)
+		utils.Log.Printf("[%s] %d %s", UserName, ChatID, Text)
 
 		// Ответим пользователю его же сообщением
 		reply := Text
@@ -146,5 +139,3 @@ func runbot() {
 	}
 
 }
-
-
