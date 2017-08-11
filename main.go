@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/gocarina/gocsv"
+	"github.com/YKatrechko/smdbot/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/gocarina/gocsv"
 	"os"
-	"smdtrns/utils"
 )
 
 type SMD struct {

@@ -10,8 +10,8 @@ func TestAll(t *testing.T) {
 	CreateTable(db)
 
 	items := []SMD{
-		SMD{Code:"1", Device:"213", Description:"decfor213"},
-		SMD{Code:"2", Device:"214", Description:"decfor214"},
+		SMD{Code: "1", Device: "213", Description: "decfor213"},
+		SMD{Code: "2", Device: "214", Description: "decfor214"},
 	}
 	StoreItem(db, items)
 
@@ -19,8 +19,8 @@ func TestAll(t *testing.T) {
 	t.Log(readItems)
 
 	items2 := []SMD{
-		SMD{Code:"1", Device:"215", Description: "-"},
-		SMD{Code:"3", Device:"216", Description:"decfor214"},
+		SMD{Code: "1", Device: "215", Description: "-"},
+		SMD{Code: "3", Device: "216", Description: "decfor214"},
 	}
 	StoreItem(db, items2)
 

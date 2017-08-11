@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"os"
 	"log"
+	"os"
 )
 
 //Configuration needed for plugins and bot
