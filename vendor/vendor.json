@@ -1,0 +1,37 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "8TTLSu2UR3Zss3oDJznqO+JnT3Q=",
+			"path": "github.com/go-telegram-bot-api/telegram-bot-api",
+			"revision": "9dda67c714e5e2cba837b28a0172cca2ed54f078",
+			"revisionTime": "2017-08-06T03:56:32Z"
+		},
+		{
+			"checksumSHA1": "0HMLju6J1vXMYUyhBlYJziDIRZU=",
+			"path": "github.com/gocarina/gocsv",
+			"revision": "eb0665f781337b21e8e193c6f888e2acaa0ff7e4",
+			"revisionTime": "2017-07-15T13:34:24Z"
+		},
+		{
+			"checksumSHA1": "Dm3jyGB6xBxzBci+EX2uBQrqjcI=",
+			"path": "github.com/mattn/go-sqlite3",
+			"revision": "6654e412c3c7eabb310d920cf73a2102dbf8c632",
+			"revisionTime": "2017-08-01T17:06:40Z"
+		},
+		{
+			"checksumSHA1": "mYrkYI/2iFOlfvPzsjYIKO8KUGY=",
+			"path": "github.com/technoweenie/multipartstreamer",
+			"revision": "a90a01d73ae432e2611d178c18367fbaa13e0154",
+			"revisionTime": "2013-10-20T00:18:33Z"
+		},
+		{
+			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",
+			"path": "golang.org/x/net/context",
+			"revision": "1c05540f6879653db88113bc4a2b70aec4bd491f",
+			"revisionTime": "2017-08-04T00:04:37Z"
+		}
+	],
+	"rootPath": "github.com/YKatrechko/smdbot"
+}
