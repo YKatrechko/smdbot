@@ -4,7 +4,7 @@ go:
   - 1.8
 
 before_install:
-  - echo "target: ;" > Makefile
+  - echo 'target: ;' > Makefile
   - make
   - go get -u github.com/kardianos/govendor
   - govendor sync
