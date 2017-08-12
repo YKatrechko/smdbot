@@ -41,7 +41,7 @@ func LoadConfig(f string) *Config {
 
 func DefaultConfig(cnfg *Config) {
 	if cnfg.LogFile == "" {
-		cnfg.LogFile = "smdtelegram.log"
+		cnfg.LogFile = "smdbot.log"
 	}
 	if cnfg.DBFile == "" {
 		cnfg.DBFile = "smdbase.db"
