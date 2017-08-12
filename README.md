@@ -1,4 +1,4 @@
-# SMD bot
+# SMD bot - A telegram bot written in Golang
 Simple Telegram bot for finding SMD transistor by code
 
 [![Build Status](https://travis-ci.org/YKatrechko/smdbot.svg?branch=master)](https://travis-ci.org/YKatrechko/smdbot)
