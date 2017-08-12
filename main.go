@@ -4,40 +4,17 @@ import (
 	"fmt"
 	"github.com/YKatrechko/smdbot/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/gocarina/gocsv"
-	"os"
+	"github.com/YKatrechko/smdbot/dbase"
+	"strings"
 )
 
-type SMD struct {
-	// Our example struct, you can use "-" to ignore a field
-	Code        string `csv:"code"`              // code
-	A           string `csv:"-"`                 // A
-	Device      string `csv:"Type"`              // Type
-	Function    string `csv:"Function"`          // Function
-	Description string `csv:"Short description"` // Short description
-	Case        string `csv:"Case"`              // Case
-	Mnf         string `csv:"Mnf"`               // Mnf
-}
-
 var (
-	//Log              = utils.Log
-	SiteList         map[string]int
-	chatID           int64
-	telegramBotToken string
-	config           *utils.Config
-	configFile       string
-	HelpMsg          = "Это простой мониторинг доступности сайтов. Он обходит сайты в списке и ждет что он ответит 200, если возвращается не 200 или ошибки подключения, то бот пришлет уведомления в групповой чат\n" +
-		"Список доступных комманд:\n" +
-		"/site_list - покажет список сайтов в мониторинге и их статусы (про статусы ниже)\n" +
-		"/site_add [url] - добавит url в список мониторинга\n" +
-		"/site_del [url] - удалит url из списка мониторинга\n" +
-		"/help - отобразить это сообщение\n" +
-		"\n" +
-		"У сайтов может быть несколько статусов:\n" +
-		"0 - никогда не проверялся (ждем проверки)\n" +
-		"1 - ошибка подключения \n" +
-		"200 - ОК-статус" +
-		"все остальные http-коды считаются некорректными"
+	chatID  int64
+	config  *utils.Config
+	HelpMsg = "This bot search smd transistor by code\n" +
+		"List of available commands:\n" +
+		"*/search* `[code]` - search smd transistor by code\n" +
+		"*/help* - show this message\n"
 )
 
 func initconf() {
@@ -59,44 +36,19 @@ func initconf() {
 
 ///
 func main() {
+
 	println("Initialization...")
 	initconf()
 	defer utils.Initlog(config.LogFile)()
-	utils.Log.Println("Running 1")
 
 	runbot()
-
-	smddataFile, err := os.OpenFile("test.txt", os.O_RDONLY|os.O_CREATE, os.ModePerm)
-	if err != nil {
-		panic(err)
-	}
-	defer smddataFile.Close()
-
-	smdlist := []*SMD{}
-
-	if err := gocsv.UnmarshalFile(smddataFile, &smdlist); err != nil { // Load clients from file
-		panic(err)
-	}
-	for _, smd := range smdlist {
-		fmt.Println("> ", smd.Device, " - ", smd.Description)
-	}
-
-	//if _, err := clientsFile.Seek(0, 0); err != nil { // Go to the start of the file
-	//	panic(err)
-	//}
-	//
-	//clients = append(clients, &Client{Id: "12", Name: "John", Age: "21"}) // Add clients
-	//clients = append(clients, &Client{Id: "13", Name: "Fred"})
-	//clients = append(clients, &Client{Id: "14", Name: "James", Age: "32"})
-	//clients = append(clients, &Client{Id: "15", Name: "Danny"})
-	//csvContent, err := gocsv.MarshalString(&clients) // Get all clients as CSV string
-	////err = gocsv.MarshalFile(&clients, clientsFile) // Use this to save the CSV back to the file
-	//if err != nil {
-	//	panic(err)
-	//}
-	//fmt.Println(csvContent) // Display all clients as CSV string
 }
+
 func runbot() {
+	db := dbase.InitDB(config.DBFile)
+	defer db.Close()
+	//CreateTable(db)
+
 	utils.Log.Println("Running bot...")
 	bot, err := tgbotapi.NewBotAPI(config.Token)
 	if err != nil {
@@ -115,25 +67,63 @@ func runbot() {
 	}
 	// В канал updates будут приходить все новые сообщения.
 	for update := range updates {
+		reply := ""
+		if update.Message == nil {
+			continue
+		}
 		// Пользователь, который написал боту
 		UserName := update.Message.From.UserName
 
-		// ID чата/диалога.
-		// Может быть идентификатором как чата с пользователем (тогда он равен UserID) так и публичного чата/канала
+		// ID чата/диалога. Может быть идентификатором как чата с пользователем (тогда он равен UserID) так и публичного чата/канала
 		ChatID := update.Message.Chat.ID
 
-		// Текст сообщения
-		Text := update.Message.Text
+		utils.Log.Printf("Req [%s] %s", UserName, update.Message.Text)
 
-		utils.Log.Printf("[%s] %d %s", UserName, ChatID, Text)
+		if update.Message.IsCommand() {
+			switch update.Message.Command() {
+			case "search":
+				code := update.Message.CommandArguments()
+				if code == "" {
+					reply = "*code* can't be empty to search\n"
+					break
+				}
+				if strings.Contains(update.Message.CommandArguments(), " ") {
+					code = strings.SplitN(code, " ", 2)[0]
+				}
+				utils.Log.Printf("Code [%s]", code)
 
-		// Ответим пользователю его же сообщением
-		reply := Text
+				//update.Message.Text;
+				readItems := dbase.ReadItemsByCode(db, code)
+				utils.Log.Println(readItems)
+				if len(readItems) == 0 {
+					reply = fmt.Sprintf("device with code - *%s* isn't found", code)
+				}
+				for _, item := range readItems {
+					str := fmt.Sprintf(
+						"*Code* _%s_\n"+
+							"*Device* _%s_\n"+
+							"*Function* _%s_\n"+
+							"*Description* _%s_\n",
+						item.Code,
+						item.Device,
+						item.Function,
+						item.Description)
+					reply += str + "\n"
+				}
+				break
+			case "help":
+				reply = HelpMsg
+			}
+		} else {
+			// Ответим пользователю его же сообщением
+			reply = fmt.Sprintf("Your text: _%s_\n", update.Message.Text)
+		}
+		utils.Log.Printf("Resp: \n%s", reply)
+
 		// Созадаем сообщение
 		msg := tgbotapi.NewMessage(ChatID, reply)
-
 		msg.ReplyToMessageID = update.Message.MessageID
-
+		msg.ParseMode = "markdown"
 		// и отправляем его
 		bot.Send(msg)
 	}

@@ -30,7 +30,7 @@ func Initopts() (configurationFile string, logFile string) {
 		}
 	}
 	if configurationFile == "" {
-		configurationFile = "config.json"
+		configurationFile = ".config.json"
 	}
 
 	return configurationFile, logFile
