@@ -50,7 +50,7 @@ func StoreItem(db *sql.DB, items []*SMD) {
 		function,
 		description,
 		InsertedDatetime
-	) values(?, ?, ?, CURRENT_TIMESTAMP)
+	) values(?, ?, ?, ?, CURRENT_TIMESTAMP)
 	`
 
 	stmt, err := db.Prepare(sql_additem)
