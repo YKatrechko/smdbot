@@ -76,8 +76,8 @@ func ReadItemsAll(db *sql.DB) []SMD {
 
 func ReadItemsByCode(db *sql.DB, code string) []SMD {
 	sql := `
-	SELECT code, device, description FROM items
-	WHERE code = ` + code + `
+	SELECT code, device, function, description FROM items
+	WHERE code = "` + code + `"
 	ORDER BY datetime(insertedDatetime) DESC
 	`
 	return readDB(db, sql)
