@@ -11,11 +11,8 @@ script:
   - GOOS=linux GOARCH=amd64 CGO_ENABLED=1  go build
 
 after_success:
-  - ls -lh $GOPATH # Assuming you have some files in out/ that you would like to upload
-  - ls -lh $GOPATH/bin # Assuming you have some files in out/ that you would like to upload
-  - ls -lh $GOPATH/src # Assuming you have some files in out/ that you would like to upload
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - bash ./upload.sh $GOPATH/bin/smdbot
+  - bash ./upload.sh smdbot*
 
 branches:
   except:
