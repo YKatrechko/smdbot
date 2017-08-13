@@ -94,7 +94,7 @@ func readDB(db *sql.DB, sql string) []SMD {
 	var result []SMD
 	for rows.Next() {
 		item := SMD{}
-		if err2 := rows.Scan(&item.Code, &item.Device, &item.Description); err2 != nil {
+		if err2 := rows.Scan(&item.Code, &item.Device, &item.Function, &item.Description); err2 != nil {
 			panic(err2)
 		}
 		result = append(result, item)
