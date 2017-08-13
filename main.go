@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/ykatrechko/smdbot/utils"
+	"github.com/YKatrechko/smdbot/utils"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/ykatrechko/smdbot/dbase"
+	"github.com/YKatrechko/smdbot/dbase"
 	"strings"
 )
 

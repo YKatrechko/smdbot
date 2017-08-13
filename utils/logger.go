@@ -11,6 +11,8 @@ var (
 
 func Initlog(logpath string) func() {
 	Log = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	return func() {}
+
 	f, err := os.OpenFile(logpath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		Log.Printf("Error opening log file - %v", err)
