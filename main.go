@@ -100,10 +100,7 @@ func runbot() {
 				}
 				for _, item := range readItems {
 					str := fmt.Sprintf(
-						"*Code* _%s_\n"+
-							"*Device* _%s_\n"+
-							"*Function* _%s_\n"+
-							"*Description* _%s_\n",
+						"*Code* %s | *%s* | _%s_\n*Description* _%s_\n",
 						item.Code,
 						item.Device,
 						item.Function,
