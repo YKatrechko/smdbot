@@ -107,7 +107,7 @@ func runbot() {
 						item.Code,
 						item.Device,
 						item.Function,
-						"case",
+						item.Case,
 						item.Description)
 				}
 				reply = str + "```"

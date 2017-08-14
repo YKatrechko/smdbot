@@ -32,6 +32,7 @@ func CreateTable(db *sql.DB) {
 		code TEXT,
 		device TEXT,
 		function TEXT,
+		dcase TEXT,
 		description TEXT,
 		insertedDatetime DATETIME
 	);
@@ -48,9 +49,10 @@ func StoreItem(db *sql.DB, items []*SMD) {
 		code,
 		device,
 		function,
+		dcase,
 		description,
-		InsertedDatetime
-	) values(?, ?, ?, ?, CURRENT_TIMESTAMP)
+		insertedDatetime
+	) values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 	`
 
 	stmt, err := db.Prepare(sql_additem)
@@ -60,7 +62,7 @@ func StoreItem(db *sql.DB, items []*SMD) {
 	defer stmt.Close()
 
 	for _, item := range items {
-		if _, err2 := stmt.Exec(item.Code, item.Device, item.Function, item.Description); err2 != nil {
+		if _, err2 := stmt.Exec(item.Code, item.Device, item.Function, item.Case, item.Description); err2 != nil {
 			panic(err2)
 		}
 	}
@@ -68,7 +70,7 @@ func StoreItem(db *sql.DB, items []*SMD) {
 
 func ReadItemsAll(db *sql.DB) []SMD {
 	sql := `
-	SELECT code, device, function, description FROM items
+	SELECT code, device, function, dcase, description FROM items
 	ORDER BY datetime(insertedDatetime) DESC
 	`
 	return readDB(db, sql)
@@ -76,7 +78,7 @@ func ReadItemsAll(db *sql.DB) []SMD {
 
 func ReadItemsByCode(db *sql.DB, code string) []SMD {
 	sql := `
-	SELECT code, device, function, description FROM items
+	SELECT code, device, function, dcase, description FROM items
 	WHERE code = "` + code + `"
 	ORDER BY datetime(insertedDatetime) DESC
 	`
@@ -94,7 +96,7 @@ func readDB(db *sql.DB, sql string) []SMD {
 	var result []SMD
 	for rows.Next() {
 		item := SMD{}
-		if err2 := rows.Scan(&item.Code, &item.Device, &item.Function, &item.Description); err2 != nil {
+		if err2 := rows.Scan(&item.Code, &item.Device, &item.Function, &item.Case, &item.Description); err2 != nil {
 			panic(err2)
 		}
 		result = append(result, item)

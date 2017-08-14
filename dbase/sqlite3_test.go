@@ -39,7 +39,6 @@ func TestFillBase(t *testing.T) {
 	defer db.Close()
 	CreateTable(db)
 
-
 	smddataFile, err := os.OpenFile("test.csv", os.O_RDONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)
