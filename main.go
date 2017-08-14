@@ -97,16 +97,20 @@ func runbot() {
 				utils.Log.Println(readItems)
 				if len(readItems) == 0 {
 					reply = fmt.Sprintf("device with code - *%s* isn't found", code)
+					break
 				}
+				str := fmt.Sprintf("``` |%6s |%14s |%22s |%7s\n",
+					"code", "device", "function", "case")
 				for _, item := range readItems {
-					str := fmt.Sprintf(
-						"*Code* %s | *%s* | _%s_\n*Description* _%s_\n",
+					str += fmt.Sprintf(
+						" |%6s |%14s |%22s |%7s\nDescr: %s\n",
 						item.Code,
 						item.Device,
 						item.Function,
+						"case",
 						item.Description)
-					reply += str + "\n"
 				}
+				reply = str + "```"
 				break
 			case "help":
 				reply = HelpMsg
