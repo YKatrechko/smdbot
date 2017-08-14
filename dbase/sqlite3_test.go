@@ -32,7 +32,7 @@ func TestAll(t *testing.T) {
 	t.Log(readItems2)
 }
 
-func TestFillBase(t *testing.T) {
+func TestFilltmpBase(t *testing.T) {
 	const dbpath = "smd.db"
 
 	db := InitDB(dbpath)
@@ -56,3 +56,26 @@ func TestFillBase(t *testing.T) {
 	t.Log(readItems)
 }
 
+func TestFillBase(t *testing.T) {
+	const dbpath = "smd.db"
+
+	db := InitDB(dbpath)
+	defer db.Close()
+	CreateTable(db)
+
+	smddataFile, err := os.OpenFile("databook.csv", os.O_RDONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+	defer smddataFile.Close()
+
+	smdlist := []*SMD{}
+	if err := gocsv.UnmarshalFile(smddataFile, &smdlist); err != nil { // Load clients from file
+		panic(err)
+	}
+
+	StoreItem(db, smdlist)
+
+	readItems := ReadItemsAll(db)
+	t.Log(len(readItems))
+}
