@@ -9,16 +9,18 @@ var (
 	Log *log.Logger
 )
 
-func Initlog(logpath string) func() {
+func Initlog(config *Config) func() {
 	Log = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	return func() {}
+	if config.Debug {
+		return func() {}
+	}
 
-	f, err := os.OpenFile(logpath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	f, err := os.OpenFile(config.LogFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		Log.Printf("Error opening log file - %v", err)
 		return func() {}
 	}
-	println("LogFile: " + logpath)
+	println("LogFile: " + config.LogFile)
 	Log.SetOutput(f)
 	Log.Println("-------------")
 	Log.Println("Start logging")

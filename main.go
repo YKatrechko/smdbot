@@ -9,7 +9,6 @@ import (
 )
 
 var (
-	chatID  int64
 	config  *utils.Config
 	HelpMsg = "This bot search smd transistor by code\n" +
 		"List of available commands:\n" +
@@ -31,15 +30,13 @@ func initconf() {
 	if config.Token == "" {
 		panic("Token can't be empty")
 	}
-	//utils.SaveConfig(config)
 }
 
-///
 func main() {
 
 	println("Initialization...")
 	initconf()
-	defer utils.Initlog(config.LogFile)()
+	defer utils.Initlog(config)()
 
 	runbot()
 }
@@ -47,7 +44,6 @@ func main() {
 func runbot() {
 	db := dbase.InitDB(config.DBFile)
 	defer db.Close()
-	//CreateTable(db)
 
 	utils.Log.Println("Running bot...")
 	bot, err := tgbotapi.NewBotAPI(config.Token)
@@ -55,7 +51,7 @@ func runbot() {
 		utils.Log.Panic(err)
 	}
 
-	bot.Debug = true
+	bot.Debug = config.Debug
 	utils.Log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	// инициализируем канал, куда будут прилетать обновления от API
@@ -71,13 +67,8 @@ func runbot() {
 		if update.Message == nil {
 			continue
 		}
-		// Пользователь, который написал боту
-		UserName := update.Message.From.UserName
-
-		// ID чата/диалога. Может быть идентификатором как чата с пользователем (тогда он равен UserID) так и публичного чата/канала
+		utils.Log.Printf("Req [%s](%s,%s) %s", update.Message.From.UserName,update.Message.From.FirstName,update.Message.From.LastName, update.Message.Text)
 		ChatID := update.Message.Chat.ID
-
-		utils.Log.Printf("Req [%s] %s", UserName, update.Message.Text)
 
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {

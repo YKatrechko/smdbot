@@ -11,6 +11,7 @@ type Config struct {
 	LogFile string
 	DBFile  string
 	Token   string
+	Debug   bool
 	//RedditUser     string
 	//RedditPassword string
 	//BrainFile      string
