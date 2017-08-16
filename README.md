@@ -19,7 +19,8 @@ The bot reads a json file for configuration:
 {
         "Token" : "XXXXXXX",
         "DBFile": "smdbase.db",
-        "LogFile": "output.log"
+        "LogFile": "output.log",
+        "Debug": true
 }
 ```
 
